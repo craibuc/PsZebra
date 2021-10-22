@@ -14,3 +14,7 @@ PowerShell module to interact with Zebra printers.
 ## Contributors
 
 - [Craig Buchanan](https://github.com/craibuc/)
+
+## Reference
+
+- [ZPL Command Information and Details](https://www.zebra.com/us/en/support-downloads/knowledge-articles/zpl-command-information-and-details.html)
