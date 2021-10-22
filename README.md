@@ -1,2 +1,2 @@
 # PsZebra
-PowerShell module to print to Zebra barcode printers
+PowerShell module to interact with Zebra printers.
