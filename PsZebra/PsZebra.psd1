@@ -30,7 +30,7 @@ CompanyName = 'Cogniza, Inc.'
 Copyright = '(c) Craig Buchanan. All rights reserved.'
 
 # Description of the functionality provided by this module
-# Description = ''
+Description = 'PowerShell module to interact with Zebra printers.'
 
 # Minimum version of the PowerShell engine required by this module
 # PowerShellVersion = ''
