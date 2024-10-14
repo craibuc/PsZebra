@@ -93,30 +93,42 @@ function ConvertTo-PrinterStatus {
         [object]$InputObject
     )
         
-    Begin {}
-    Process {
+    Begin {
+        $i=0
         $Status = @{}
+    }
+    Process {
 
         $Commands = ($InputObject -replace '[\x02\x03\x0D]', '') -split '\x0A'
 
-        [int]$Status.Communication, [bool][int]$Status.PaperOut, [bool][int]$Status.Pause, 
-        [int]$Status.LabelLength, [int]$Status.Formats, [bool][int]$Status.BufferFull, 
-        [bool][int]$Status.DiagnosticMode, [bool][int]$Status.PartialFormat, $Status.iii, 
-        [bool][int]$Status.CorruptRam, [bool][int]$Status.UnderTemperature, [bool][int]$Status.OverTemperature = $Commands[0] -split ','
-                
-        # $Status.Communication = $Status.Communication.ToString("B")
+        switch ($i) {
+            0 { 
+                [int]$Status.Communication, [bool][int]$Status.PaperOut, [bool][int]$Status.Pause, 
+                [int]$Status.LabelLength, [int]$Status.Formats, [bool][int]$Status.BufferFull, 
+                [bool][int]$Status.DiagnosticMode, [bool][int]$Status.PartialFormat, $Status.iii, 
+                [bool][int]$Status.CorruptRam, [bool][int]$Status.UnderTemperature, [bool][int]$Status.OverTemperature = $Commands -split ','
+                        
+                # $Status.Communication = $Status.Communication.ToString("B")
+            }
+            1 { 
+                [Functions][int]$Status.Functions, $Status.n, [bool][int]$Status.HeadUp, 
+                [bool][int]$Status.RibbonOut, [bool][int]$Status.ThermalTransferMode, [PrintMode]$Status.PrintMode, 
+                $Status.PritnWidthMode, [bool][int]$Status.LabelWaiting, [int]$Status.LabelRemaining, 
+                [bool][int]$Status.FormatWhilePrinting, [int]$Status.GraphImages = $Commands -split ','
+                # $Status.Functions = $Status.Functions.ToString("B")
 
-        [Functions][int]$Status.Functions, $Status.n, [bool][int]$Status.HeadUp, 
-        [bool][int]$Status.RibbonOut, [bool][int]$Status.ThermalTransferMode, [PrintMode]$Status.PrintMode, 
-        $Status.PritnWidthMode, [bool][int]$Status.LabelWaiting, [int]$Status.LabelRemaining, 
-        [bool][int]$Status.FormatWhilePrinting, [int]$Status.GraphImages = $Commands[1] -split ','
+            }
+            2 { 
+                $Status.Password, [bool][int]$Status.RamInstalled = $Commands -split ','
 
-        # $Status.Functions = $Status.Functions.ToString("B")
+            }
+        }
 
-        $Status.Password, [bool][int]$Status.RamInstalled = $Commands[2] -split ','
+        $i += 1
 
+    }
+    End {
         [pscustomobject]$Status
     }
-    End {}
     
 }
