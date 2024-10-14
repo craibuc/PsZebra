@@ -55,5 +55,18 @@ Describe 'Out-ZebraPrinter' {
             }
         }
 
+        Context 'Timeout' {
+            BeforeAll {
+                $ParameterName='Timeout'
+            }
+            It "$ParameterName is a [int]" {
+                $Command | Should -HaveParameter $ParameterName -Type [int]
+            }
+            It "$ParameterName is optional" {
+                $Command | Should -HaveParameter $ParameterName -Not -Mandatory
+            }
+        }
+
     }
+
 }

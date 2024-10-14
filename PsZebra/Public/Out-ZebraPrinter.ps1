@@ -9,7 +9,10 @@ The ZPL commands to be printed.
 The IP address of the printer.
 
 .PARAMETER Port
-The TCP/IP port of the printer.
+The TCP/IP port of the printer.  Default: 9100.
+
+.PARAMETER Timeout
+The delay, in milliseconds, that the printer will wait during send and receive before failing.  Default: 500.
 
 .EXAMPLE
 '^FT78,76^A0N,28,28^FH\^FDHello, World!^FS' | Out-ZebraPrinter -IpAddress 10.10.10.10 -Port 9100
@@ -26,7 +29,10 @@ function Out-ZebraPrinter
         [string]$IpAddress,
 
         [Parameter()]
-        [int]$Port = 9100
+        [int]$Port = 9100,
+
+        [Parameter()]
+        [int]$Timeout = 500
     )
 
     begin {
@@ -34,13 +40,18 @@ function Out-ZebraPrinter
 
         [System.Net.Sockets.TcpClient] $client
         [System.IO.StreamWriter] $writer
+        [System.IO.StreamReader] $reader
 
         try {
             if ($PSCmdlet.ShouldProcess("$IpAddress`:$Port",'Connect'))
             {
                 $client = [System.Net.Sockets.TcpClient]::new()
+                $client.SendTimeout = $Timeout # milliseconds
+                $client.ReceiveTimeout = $Timeout # milliseconds        
                 $client.Connect($ipAddress, $port)
+
                 $writer = [System.IO.StreamWriter]::new($client.GetStream())
+                $reader = [System.IO.StreamReader]::new($client.GetStream())
             }
         }
         catch {
@@ -53,7 +64,25 @@ function Out-ZebraPrinter
             if ($PSCmdlet.ShouldProcess("$IpAddress`:$Port",'Write'))
             {
                 $writer.Write($Command)
-                $writer.Flush()    
+                $writer.Flush()
+
+                # read response
+                $Response = @()
+
+                try 
+                {
+                    while ($reader.Peek()) {
+                        $Line = $reader.ReadLine()
+                        Write-Debug "Line: $Line"
+                        $Response += $Line
+                        # $Response += $reader.ReadLine()
+                    }
+                }
+                catch [System.IO.IOException] {
+                    #  ignore
+                }
+
+                $Response
             }
         }
         catch {
@@ -63,15 +92,17 @@ function Out-ZebraPrinter
     end {
         Write-Verbose 'Closing connection...'
 
+        if ($null -ne $reader) {
+            $reader.Dispose()
+        }
+
         if ($null -ne $writer)
         {
-            $writer.Close()
             $writer.Dispose()    
         }
 
         if ($null -ne $client)
         {
-            $client.Close()
             $client.Dispose()    
         }
     }
