@@ -43,7 +43,7 @@ Sample response includes control characters and data.
 # <STX> = \x02 - 2
 # <ETX> = \x03 - 3
 # <CR> = \x0D - 13
-# <LF> = \x0A - 10
+# <LF> =  \x0A- 10
 
 # <STX>030,0,0,0414,000,0,0,0,000,0,0,0<ETX><CR><LF>
 # <STX>001,0,0,0,1,2,6,0,00000000,1,000<ETX><CR><LF>
