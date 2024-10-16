@@ -75,7 +75,6 @@ function Out-ZebraPrinter
                         $Line = $reader.ReadLine()
                         Write-Debug "Line: $Line"
                         $Response += $Line
-                        # $Response += $reader.ReadLine()
                     }
                 }
                 catch [System.IO.IOException] {
@@ -96,13 +95,11 @@ function Out-ZebraPrinter
             $reader.Dispose()
         }
 
-        if ($null -ne $writer)
-        {
+        if ($null -ne $writer) {
             $writer.Dispose()    
         }
 
-        if ($null -ne $client)
-        {
+        if ($null -ne $client) {
             $client.Dispose()    
         }
     }
