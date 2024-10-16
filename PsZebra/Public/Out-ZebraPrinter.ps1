@@ -38,10 +38,6 @@ function Out-ZebraPrinter
     begin {
         Write-Verbose "Opening connection to $IpAddress`:$Port..."
 
-        [System.Net.Sockets.TcpClient] $client
-        [System.IO.StreamWriter] $writer
-        [System.IO.StreamReader] $reader
-
         try {
             if ($PSCmdlet.ShouldProcess("$IpAddress`:$Port",'Connect'))
             {
@@ -60,28 +56,25 @@ function Out-ZebraPrinter
     }
     process {
         try {
-            Write-Verbose 'Writing stream...'
             if ($PSCmdlet.ShouldProcess("$IpAddress`:$Port",'Write'))
             {
+                Write-Verbose 'Writing stream...'
                 $writer.Write($Command)
                 $writer.Flush()
 
-                # read response
-                $Response = @()
-
+                Write-Verbose 'Reading stream...'
                 try 
                 {
                     while ($reader.Peek()) {
                         $Line = $reader.ReadLine()
                         Write-Debug "Line: $Line"
-                        $Response += $Line
+                        Write-Output $Line
                     }
                 }
                 catch [System.IO.IOException] {
                     #  ignore
                 }
 
-                $Response
             }
         }
         catch {
