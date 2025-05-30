@@ -18,3 +18,4 @@ PowerShell module to interact with Zebra printers.
 ## Reference
 
 - [ ZPL II Programming Guide Volume One - Zebra Technologies](https://www.zebra.com/content/dam/support-dam/en/documentation/unrestricted/guide/software/zplii-pm-vol1.pdf)
+- [Labelary - ZPL viewer](https://labelary.com/viewer.html)
